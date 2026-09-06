@@ -82,8 +82,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
           summary.totalCalories > max ? summary.totalCalories : max,
     );
 
-    return SizedBox(
-      height: 220,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      height: 240,
+      padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.18),
+        ),
+      ),
       child: BarChart(
         BarChartData(
           maxY: maxCalories == 0 ? 100 : maxCalories * 1.2,
@@ -96,7 +106,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 BarChartRodData(
                   toY: summary.totalCalories.toDouble(),
                   width: 18,
-                  borderRadius: BorderRadius.circular(4),
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(6),
                 ),
               ],
             );
@@ -143,6 +154,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Histórico')),
       body: SafeArea(
@@ -158,9 +171,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 24),
-                    Text(
-                      'Calorias',
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.bar_chart_rounded,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Calorias',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     _buildCaloriesChart(),
@@ -185,13 +207,26 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
                           return Card(
                             child: ListTile(
-                              leading: const Icon(
-                                Icons.calendar_today_outlined,
+                              leading: CircleAvatar(
+                                backgroundColor: colorScheme.primaryContainer,
+                                foregroundColor: colorScheme.primary,
+                                child: const Icon(
+                                  Icons.calendar_today_outlined,
+                                ),
                               ),
                               title: Text('$day/$month'),
                               subtitle: Text('${summary.totalCalories} kcal'),
-                              trailing: Text(
-                                '${summary.totalFastingMinutes} min',
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.schedule_rounded,
+                                    size: 18,
+                                    color: colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text('${summary.totalFastingMinutes} min'),
+                                ],
                               ),
                             ),
                           );
