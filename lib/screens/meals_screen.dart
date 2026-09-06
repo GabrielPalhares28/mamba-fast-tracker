@@ -23,7 +23,6 @@ class _MealsScreenState extends State<MealsScreen> {
     super.initState();
     _loadMeals();
     _loadDailyCalorieGoal();
-    _editDailyCalorieGoal();
   }
 
   Future<void> _editDailyCalorieGoal() async {
