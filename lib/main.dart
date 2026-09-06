@@ -374,7 +374,12 @@ class _HomePageState extends State<HomePage> {
 
       if (endTime != null && endTime.isAfter(DateTime.now())) {
         _startTimer();
-      } else {
+      } else if (endTime != null) {
+        await _saveFastingSession(
+          endedAt: endTime,
+          actualDurationMinutes: selectedProtocol.fastingDuration.inMinutes,
+        );
+
         setState(() {
           pausedRemainingTime = null;
           fastingStatus = FastingStatus.completed;
@@ -420,7 +425,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _startFasting() {
+  Future<void> _startFasting() async {
     final now = DateTime.now();
 
     setState(() {
@@ -430,13 +435,16 @@ class _HomePageState extends State<HomePage> {
       fastingStatus = FastingStatus.fasting;
     });
 
-    _saveCurrentState();
-    NotificationService.showFastingStartedNotification();
+    await _saveCurrentState();
+
+    await NotificationService.requestPermission();
+
+    await NotificationService.showFastingStartedNotification();
 
     final endTime = fastingEndTime;
 
     if (endTime != null) {
-      NotificationService.scheduleFastingEndedNotification(endTime);
+      await NotificationService.scheduleFastingEndedNotification(endTime);
     }
 
     _startTimer();
@@ -511,12 +519,16 @@ class _HomePageState extends State<HomePage> {
         ? fastingEndTime!.difference(endedAt)
         : Duration.zero;
 
-    final remainingMinutes = remainingDuration.isNegative
-        ? 0
-        : remainingDuration.inMinutes;
+    final safeRemainingDuration = remainingDuration.isNegative
+        ? Duration.zero
+        : remainingDuration;
 
-    final actualDurationMinutes =
-        selectedProtocol.fastingDuration.inMinutes - remainingMinutes;
+    final actualDuration =
+        selectedProtocol.fastingDuration - safeRemainingDuration;
+
+    final actualDurationMinutes = actualDuration.isNegative
+        ? 0
+        : actualDuration.inMinutes;
 
     setState(() {
       fastingEndTime = endedAt;
