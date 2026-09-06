@@ -295,6 +295,7 @@ class _MealsScreenState extends State<MealsScreen> {
       (total, meal) => total + meal.calories,
     );
     final isWithinGoal = totalCalories <= dailyCalorieGoal;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Refeições')),
@@ -305,26 +306,61 @@ class _MealsScreenState extends State<MealsScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text('Hoje', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              Text(
-                '$totalCalories kcal consumidas',
-
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-
-              Row(
-                children: [
-                  Expanded(child: Text('Meta: $dailyCalorieGoal kcal')),
-                  TextButton.icon(
-                    onPressed: _editDailyCalorieGoal,
-                    icon: const Icon(Icons.edit_outlined),
-                    label: const Text('Alterar'),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: colorScheme.primary.withValues(alpha: 0.22),
                   ),
-                ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$totalCalories kcal consumidas',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: Text('Meta: $dailyCalorieGoal kcal')),
+                        TextButton.icon(
+                          onPressed: _editDailyCalorieGoal,
+                          icon: const Icon(Icons.edit_outlined),
+                          label: const Text('Alterar'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          isWithinGoal
+                              ? Icons.check_circle_outline_rounded
+                              : Icons.warning_amber_rounded,
+                          size: 20,
+                          color: isWithinGoal
+                              ? colorScheme.primary
+                              : colorScheme.error,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          isWithinGoal ? 'Dentro da meta' : 'Acima da meta',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isWithinGoal
+                                ? colorScheme.primary
+                                : colorScheme.error,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-
-              Text(isWithinGoal ? 'Dentro da meta' : 'Acima da meta'),
               const SizedBox(height: 24),
 
               Expanded(
@@ -341,6 +377,11 @@ class _MealsScreenState extends State<MealsScreen> {
 
                           return Card(
                             child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: colorScheme.primaryContainer,
+                                foregroundColor: colorScheme.primary,
+                                child: const Icon(Icons.restaurant_rounded),
+                              ),
                               title: Text(meal.name),
                               subtitle: Text(
                                 '${meal.createdAt.hour.toString().padLeft(2, '0')}:'
