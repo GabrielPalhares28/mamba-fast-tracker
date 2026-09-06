@@ -30,16 +30,29 @@ class ProtocolSelector extends StatelessWidget {
                     }
                   : null,
               style: OutlinedButton.styleFrom(
+                foregroundColor: isSelected
+                    ? const Color(0xFFFFFFFF)
+                    : Theme.of(context).colorScheme.onSurface,
                 backgroundColor: isSelected
-                    ? Theme.of(context).colorScheme.primaryContainer
+                    ? const Color(0xFF2E7D5B)
                     : null,
                 side: BorderSide(
                   color: isSelected
-                      ? Theme.of(context).colorScheme.primary
+                      ? const Color(0xFF63C174)
                       : Theme.of(context).colorScheme.outline,
+                  width: isSelected ? 1.5 : 1,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text(
+                protocol.name,
+                style: TextStyle(
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
               ),
-              child: Text(protocol.name),
             ),
           ),
         );
